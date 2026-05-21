@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:html="http://www.w3.org/1999/xhtml">
+  <groupbox>
+    <label><html:h2 style="margin:0">Paper Updater</html:h2></label>
+    <description style="max-width: 50em">
+      Detects newer arXiv versions and journal-published versions of papers in your library.
+      New PDFs are attached alongside the originals.
+    </description>
+
+    <separator class="thin"/>
+
+    <checkbox id="pu-pref-scan-enabled"
+              preference="extensions.paper-updater.scanEnabled"
+              label="Run a scheduled background scan" native="true"/>
+
+    <hbox align="center">
+      <label value="Scan interval (hours):" control="pu-pref-interval"/>
+      <html:input id="pu-pref-interval"
+                  type="number" min="1" max="720"
+                  preference="extensions.paper-updater.scanIntervalHours"
+                  style="width: 6em"/>
+    </hbox>
+
+    <checkbox id="pu-pref-use-s2"
+              preference="extensions.paper-updater.useSemanticScholar"
+              label="Check Semantic Scholar for journal-published versions" native="true"/>
+
+    <checkbox id="pu-pref-update-meta"
+              preference="extensions.paper-updater.updateMetadata"
+              label="Update title, authors, DOI, venue, and date automatically" native="true"/>
+
+    <hbox align="center">
+      <label value="Delay between API requests (ms):" control="pu-pref-delay"/>
+      <html:input id="pu-pref-delay"
+                  type="number" min="500" max="60000" step="500"
+                  preference="extensions.paper-updater.requestDelayMs"
+                  style="width: 6em"/>
+      <description style="margin-left: 0.5em; opacity: 0.7">
+        arXiv asks for at least 3000 ms between requests.
+      </description>
+    </hbox>
+
+    <separator class="thin"/>
+
+    <hbox>
+      <button id="pu-pref-scan-now"
+              label="Scan library now"
+              oncommand="Zotero.PaperUpdater.runScanNow();"/>
+      <button id="pu-pref-cancel-scan"
+              label="Cancel running scan"
+              oncommand="Zotero.PaperUpdater.cancelScanNow();"/>
+      <button id="pu-pref-reschedule"
+              label="Apply schedule"
+              oncommand="Zotero.PaperUpdater.rescheduleScans();"/>
+    </hbox>
+  </groupbox>
+</vbox>

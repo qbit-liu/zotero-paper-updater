@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "Paper Updater",
+  "version": "0.1.0",
+  "description": "Detect and apply updates to arXiv preprints and journal-published versions of papers in your Zotero library.",
+  "author": "qbit-liu",
+  "homepage_url": "https://github.com/qbit-liu/zotero-paper-updater",
+  "icons": {
+    "48": "icon-48.png",
+    "96": "icon-96.png",
+    "128": "icon-128.png"
+  },
+  "applications": {
+    "zotero": {
+      "id": "paper-updater@phyxyi01.local",
+      "update_url": "https://example.com/updates.json",
+      "strict_min_version": "6.999",
+      "strict_max_version": "9.0.*"
+    },
+    "gecko": {
+      "id": "paper-updater@phyxyi01.local",
+      "strict_min_version": "102.0"
+    }
+  }
+}

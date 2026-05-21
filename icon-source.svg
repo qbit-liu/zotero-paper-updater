@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Indigo rounded square with inner ring -->
+  <rect width="128" height="128" rx="22" fill="#312E81"/>
+  <rect x="3" y="3" width="122" height="122" rx="19" fill="none" stroke="#1E1B4B" stroke-width="1"/>
+
+  <!-- Back paper (older version), peeks out from top-left -->
+  <rect x="18" y="23" width="66" height="77" rx="5" fill="#93C5FD"/>
+
+  <!-- Front paper (new version) with folded top-right corner -->
+  <path d="M31 36 L86 36 L102 51 L102 113 L31 113 Z" fill="#FFFFFF"/>
+  <path d="M86 36 L102 51 L86 51 Z" fill="#CBD5E1"/>
+
+  <!-- Text lines -->
+  <rect x="39" y="59" width="41" height="4.5" rx="2.25" fill="#94A3B8"/>
+  <rect x="39" y="70" width="51" height="4.5" rx="2.25" fill="#94A3B8"/>
+  <rect x="39" y="81" width="30" height="4.5" rx="2.25" fill="#94A3B8"/>
+
+  <!-- Update badge: emerald disc, white ring, white up arrow -->
+  <circle cx="100" cy="28" r="22.5" fill="#FFFFFF"/>
+  <circle cx="100" cy="28" r="19" fill="#10B981"/>
+  <path d="M100 15 L112 28 L106 28 L106 40 L94 40 L94 28 L88 28 Z" fill="#FFFFFF"/>
+</svg>

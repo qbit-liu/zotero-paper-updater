@@ -1,0 +1,27 @@
+# Build output
+build/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+
+# Python (used only for icon generation)
+__pycache__/
+*.pyc
+*.pyo
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude Code project state
+.claude/
+
+# Local logs / temp
+*.log
+.tmp/
