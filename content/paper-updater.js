@@ -67,6 +67,23 @@ Zotero.PaperUpdater = (() => {
   const TB_ICON_IDLE = "chrome://paper-updater/content/tb-idle.png";
   const TB_ICON_SCANNING = "chrome://paper-updater/content/tb-scanning.png";
 
+  function applyButtonStyle(btn, scanning) {
+    const url = scanning ? TB_ICON_SCANNING : TB_ICON_IDLE;
+    const tip = scanning ? "Cancel running scan" : "Check for paper updates";
+    btn.setAttribute("tooltiptext", tip);
+    // Use inline list-style-image only — relying on the `image` attribute
+    // sometimes caches stale art across state changes on Zotero 9. The inline
+    // style beats class CSS, and -moz-image-region: auto neutralises any
+    // sprite-clipping rule we might inherit. Explicit width/height keeps the
+    // button at a definite size even if the icon momentarily fails to load.
+    btn.setAttribute(
+      "style",
+      `list-style-image: url('${url}'); -moz-image-region: auto; width: 24px; height: 24px;`
+    );
+    btn.removeAttribute("image");
+    log(`toolbar button → ${scanning ? "scanning" : "idle"} (${url})`);
+  }
+
   // Reflects the current scan state across menus and the toolbar toggle button.
   function updateUIState() {
     const scanning = isScanning();
@@ -80,15 +97,7 @@ Zotero.PaperUpdater = (() => {
       }
 
       if (entry.id === "paper-updater-tb-button") {
-        if (scanning) {
-          el.setAttribute("tooltiptext", "Cancel running scan");
-          el.setAttribute("image", TB_ICON_SCANNING);
-          el.style.listStyleImage = `url('${TB_ICON_SCANNING}')`;
-        } else {
-          el.setAttribute("tooltiptext", "Check for paper updates");
-          el.setAttribute("image", TB_ICON_IDLE);
-          el.style.listStyleImage = `url('${TB_ICON_IDLE}')`;
-        }
+        applyButtonStyle(el, scanning);
       }
     }
   }
@@ -595,10 +604,8 @@ Zotero.PaperUpdater = (() => {
 
       const btn = createXUL(doc, "toolbarbutton");
       btn.id = "paper-updater-tb-button";
-      btn.setAttribute("class", "zotero-tb-button paper-updater-tb-button");
-      btn.setAttribute("tooltiptext", "Check for paper updates");
-      btn.setAttribute("image", TB_ICON_IDLE);
-      btn.style.listStyleImage = `url('${TB_ICON_IDLE}')`;
+      btn.setAttribute("class", "paper-updater-tb-button");
+      applyButtonStyle(btn, false);
       btn.addEventListener("command", () => {
         if (isScanning()) {
           cancelScan();
