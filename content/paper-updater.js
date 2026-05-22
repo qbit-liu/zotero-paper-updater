@@ -64,14 +64,32 @@ Zotero.PaperUpdater = (() => {
     return true;
   }
 
-  function updateCancelMenuItems() {
+  const TB_ICON_IDLE = "chrome://paper-updater/content/tb-idle.png";
+  const TB_ICON_SCANNING = "chrome://paper-updater/content/tb-scanning.png";
+
+  // Reflects the current scan state across menus and the toolbar toggle button.
+  function updateUIState() {
     const scanning = isScanning();
     for (const entry of addedElements) {
-      if (entry.id !== "paper-updater-cancel") continue;
       const el = entry.win.document.getElementById(entry.id);
       if (!el) continue;
-      if (scanning) el.removeAttribute("disabled");
-      else el.setAttribute("disabled", "true");
+
+      if (entry.id === "paper-updater-cancel") {
+        if (scanning) el.removeAttribute("disabled");
+        else el.setAttribute("disabled", "true");
+      }
+
+      if (entry.id === "paper-updater-tb-button") {
+        if (scanning) {
+          el.setAttribute("tooltiptext", "Cancel running scan");
+          el.setAttribute("image", TB_ICON_SCANNING);
+          el.style.listStyleImage = `url('${TB_ICON_SCANNING}')`;
+        } else {
+          el.setAttribute("tooltiptext", "Check for paper updates");
+          el.setAttribute("image", TB_ICON_IDLE);
+          el.style.listStyleImage = `url('${TB_ICON_IDLE}')`;
+        }
+      }
     }
   }
 
@@ -400,7 +418,7 @@ Zotero.PaperUpdater = (() => {
     );
 
     scanState = { cancelRequested: false, progress, line };
-    updateCancelMenuItems();
+    updateUIState();
 
     let updated = 0;
     let checked = 0;
@@ -445,7 +463,7 @@ Zotero.PaperUpdater = (() => {
       }
     } finally {
       scanState = null;
-      updateCancelMenuItems();
+      updateUIState();
     }
 
     if (cancelled) {
@@ -552,8 +570,59 @@ Zotero.PaperUpdater = (() => {
       addedElements.push({ win, id: "paper-updater-cancel" });
     }
 
+    // Toolbar toggle button: click to scan, click again to cancel.
+    addToolbarButton(win);
+
     // Reflect any in-progress scan state on this newly opened window.
-    updateCancelMenuItems();
+    updateUIState();
+  }
+
+  // Candidate parents for the toolbar button, in priority order. The first one
+  // found in the document wins. Inserting next to the sync button puts us in a
+  // sensible, visible spot across Zotero 7/8/9 layouts.
+  const TOOLBAR_ANCHORS = [
+    "zotero-tb-sync-stop",
+    "zotero-tb-sync",
+    "zotero-tb-sync-error",
+    "zotero-toolbar",
+  ];
+
+  function addToolbarButton(win) {
+    const doc = win.document;
+    for (const id of TOOLBAR_ANCHORS) {
+      const anchor = doc.getElementById(id);
+      if (!anchor) continue;
+
+      const btn = createXUL(doc, "toolbarbutton");
+      btn.id = "paper-updater-tb-button";
+      btn.setAttribute("class", "zotero-tb-button paper-updater-tb-button");
+      btn.setAttribute("tooltiptext", "Check for paper updates");
+      btn.setAttribute("image", TB_ICON_IDLE);
+      btn.style.listStyleImage = `url('${TB_ICON_IDLE}')`;
+      btn.addEventListener("command", () => {
+        if (isScanning()) {
+          cancelScan();
+        } else {
+          scanLibrary(true).catch(e => Zotero.logError(e));
+        }
+      });
+
+      const isToolbar = anchor.tagName === "toolbar"
+                     || anchor.tagName === "toolbaritems"
+                     || anchor.tagName === "hbox";
+      if (isToolbar) {
+        anchor.appendChild(btn);
+      } else if (anchor.parentNode) {
+        anchor.parentNode.insertBefore(btn, anchor.nextSibling);
+      } else {
+        continue;
+      }
+      addedElements.push({ win, id: "paper-updater-tb-button" });
+      log(`toolbar button inserted at #${id}`);
+      return true;
+    }
+    log("no suitable toolbar anchor found; button not added");
+    return false;
   }
 
   function removeFromWindow(win) {

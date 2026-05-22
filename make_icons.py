@@ -102,12 +102,56 @@ def render():
     return img
 
 
+def make_toolbar_icon(state):
+    """Render a 32x32 toolbar icon — green up-arrow (idle) or red stop (scanning)."""
+    s = 256  # high-res for downsampling
+    img = Image.new("RGBA", (s, s), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    if state == "idle":
+        # Emerald disc with white up-arrow
+        draw.ellipse((6, 6, s - 6, s - 6), fill=BADGE)
+        a = int(s * 0.58)
+        cx, cy = s // 2, s // 2
+        head_h = int(a * 0.45)
+        head_w = int(a * 0.92)
+        stem_w = int(a * 0.34)
+        half = a // 2
+        poly = [
+            (cx,                cy - half),
+            (cx + head_w // 2,  cy - half + head_h),
+            (cx + stem_w // 2,  cy - half + head_h),
+            (cx + stem_w // 2,  cy + half),
+            (cx - stem_w // 2,  cy + half),
+            (cx - stem_w // 2,  cy - half + head_h),
+            (cx - head_w // 2,  cy - half + head_h),
+        ]
+        draw.polygon(poly, fill=ARROW)
+    elif state == "scanning":
+        # Red disc with white rounded square (stop)
+        draw.ellipse((6, 6, s - 6, s - 6), fill=(220, 38, 38, 255))  # red-600
+        sq = int(s * 0.42)
+        cx, cy = s // 2, s // 2
+        draw.rounded_rectangle(
+            (cx - sq // 2, cy - sq // 2, cx + sq // 2, cy + sq // 2),
+            radius=int(sq * 0.18),
+            fill=ARROW,
+        )
+
+    return img.resize((32, 32), Image.LANCZOS)
+
+
 def main():
     img = render()
     img.save("icon-source.png")
     for size in (48, 96, 128):
         img.resize((size, size), Image.LANCZOS).save(f"icon-{size}.png")
         print(f"Wrote icon-{size}.png")
+
+    for state in ("idle", "scanning"):
+        path = f"content/tb-{state}.png"
+        make_toolbar_icon(state).save(path)
+        print(f"Wrote {path}")
 
 
 if __name__ == "__main__":

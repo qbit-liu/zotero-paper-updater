@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Paper Updater",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Detect and apply updates to arXiv preprints and journal-published versions of papers in your Zotero library.",
   "author": "qbit-liu",
   "homepage_url": "https://github.com/qbit-liu/zotero-paper-updater",
