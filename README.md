@@ -27,9 +27,9 @@ Tested on Zotero 9.
 
 ## Usage
 
-- Right-click items → **Check for paper updates** to scan a selection.
-- **Tools → Paper Updater: Scan library now** to scan everything.
-- **Tools → Paper Updater: Cancel running scan** to stop mid-scan.
+- **Toolbar button** next to Zotero's sync icon — click to scan, click again to cancel a running scan. The icon swaps between a green up-arrow (idle) and a red stop square (scanning) so you can see the state at a glance.
+- Right-click items → **Check for paper updates** to scan just a selection.
+- **Tools → Paper Updater: Scan library now** / **Cancel running scan** as menu equivalents.
 - A scheduled background scan also runs every 24 h by default. Adjust in **Settings → Paper Updater**.
 
 ## Build from source
