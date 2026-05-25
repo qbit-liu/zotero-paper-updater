@@ -485,12 +485,40 @@ Zotero.PaperUpdater = (() => {
 
     if (updated > 0 && win) {
       const heading = cancelled
-        ? `Paper Updater cancelled — applied ${updated} update(s) before stopping:`
-        : `Paper Updater applied ${updated} update(s):`;
-      Services.prompt.alert(win, "Paper Updater", `${heading}\n\n` + summaries.join("\n\n"));
+        ? `Paper Updater cancelled — applied ${updated} update(s) before stopping`
+        : `Paper Updater applied ${updated} update(s)`;
+      showSummaryDialog(win, heading, summaries.join("\n\n"));
     }
 
     return updated;
+  }
+
+  // Show the post-scan summary in a scrollable, resizable window. For long
+  // lists (e.g. a first-time scan with hundreds of updates), Services.prompt.alert
+  // can't be dismissed because its OK button falls below the screen — this window
+  // contains a scrolling textarea and an always-visible OK button.
+  function showSummaryDialog(win, headline, text) {
+    // Always also log the full report so it's recoverable from Help → Debug Output.
+    log(`scan summary:\n${headline}\n${text}`);
+    try {
+      win.openDialog(
+        "chrome://paper-updater/content/summary-dialog.xhtml",
+        "paper-updater-summary",
+        "chrome,dialog,modal,centerscreen,resizable,width=640,height=520",
+        { headline, text }
+      );
+    } catch (e) {
+      Zotero.logError(e);
+      // Fallback: native alert, truncated to a screen-safe size.
+      const lines = text.split("\n\n");
+      const MAX = 15;
+      let fallback = headline + "\n\n" + lines.slice(0, MAX).join("\n\n");
+      if (lines.length > MAX) {
+        fallback += `\n\n... and ${lines.length - MAX} more update(s). ` +
+          `See Help → Debug Output Logging for the full list.`;
+      }
+      Services.prompt.alert(win, "Paper Updater", fallback);
+    }
   }
 
   async function checkSelectedItems() {

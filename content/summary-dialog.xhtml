@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8"/>
+  <title>Paper Updater</title>
+  <style type="text/css"><![CDATA[
+    body {
+      font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      margin: 0;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      box-sizing: border-box;
+      background: var(--in-content-page-background, #fff);
+      color: var(--in-content-page-color, #000);
+    }
+    h2 {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    textarea {
+      flex: 1;
+      width: 100%;
+      box-sizing: border-box;
+      font: 12px Menlo, "SF Mono", Consolas, monospace;
+      white-space: pre;
+      overflow: auto;
+      padding: 10px;
+      border: 1px solid rgba(128, 128, 128, 0.4);
+      border-radius: 4px;
+      resize: none;
+      background: var(--in-content-box-background, #f9f9fb);
+      color: inherit;
+    }
+    .buttons {
+      margin-top: 12px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    button {
+      padding: 6px 20px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+  ]]></style>
+  <script type="application/javascript"><![CDATA[
+    function onLoad() {
+      const args = window.arguments && window.arguments[0];
+      if (!args) return;
+      document.getElementById("headline").textContent = args.headline || "Paper Updater";
+      document.getElementById("content").value = args.text || "";
+      // Focus OK so Enter dismisses immediately
+      setTimeout(() => document.getElementById("ok-button").focus(), 0);
+    }
+    function onKey(e) {
+      if (e.key === "Escape") {
+        window.close();
+      } else if (e.key === "Enter" && e.target.tagName.toLowerCase() !== "textarea") {
+        window.close();
+      }
+    }
+  ]]></script>
+</head>
+<body onload="onLoad()" onkeydown="onKey(event)">
+  <h2 id="headline">Paper Updater</h2>
+  <textarea id="content" readonly="readonly"></textarea>
+  <div class="buttons">
+    <button id="ok-button" onclick="window.close()">OK</button>
+  </div>
+</body>
+</html>
